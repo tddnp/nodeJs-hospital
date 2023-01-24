@@ -1,0 +1,3 @@
+body-parser: de viet API
+dotenv: dung duoc cau lenh process.env giup chung ta co the lay duoc tham so tu file moi truong
+ejs: view engine (viet duoc code logic trong html)
