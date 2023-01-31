@@ -15,21 +15,21 @@ let hashUserPassword = (password) => {
 }
 
 let handleUserLogin = (email, password) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let userData = {};
             let isExist = await checkUserEmail(email);
-            if(isExist){
+            if (isExist) {
                 // user already exist             
                 let user = await db.User.findOne({
                     attributes: ['email', 'roleId', 'passWord'],
-                    where: {email: email},    
-                    raw: true,  
+                    where: { email: email },
+                    raw: true,
                 });
-                if(user){
+                if (user) {
                     //compare password
                     let check = await bcrypt.compareSync(password, user.passWord);
-                    if (check){
+                    if (check) {
                         userData.errCode = 0;
                         userData.errMessage = "ok";
                         delete user.passWord;
@@ -55,12 +55,12 @@ let handleUserLogin = (email, password) => {
 }
 
 let checkUserEmail = (userEmail) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
                 where: { email: userEmail }
             })
-            if (user){
+            if (user) {
                 resolve(true);
             } else {
                 resolve(false);
@@ -81,11 +81,11 @@ let getAllUsers = (userId) => {
                         exclude: ['passWord']
                     }
                 })
-            } 
+            }
             if (userId && userId !== 'ALL') {
                 users = await db.User.findOne({
                     where: { id: userId },
-                    attributes : {
+                    attributes: {
                         exclude: ['passWord'],
                     }
                 })
@@ -102,28 +102,29 @@ let createNewUser = (data) => {
         try {
             //check email first 
             let check = await checkUserEmail(data.email);
-            if (check === true){
+            if (check === true) {
                 resolve({
                     errCode: 1,
                     errMessage: 'we already has this email, please try again',
                 })
-            };
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                passWord: hashPasswordFromBcrypt,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                phoneNumber: data.phoneNumber,
-                gender: data.gender === '1' ? true : false,
-                roleId: data.roleId,
-            })
-            console.log(data);
-            resolve({
-                errCode: 0,
-                errMessage: 'OK',
-            });
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    passWord: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    roleId: data.roleId,
+                })
+                console.log(data);
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                });
+            }
         } catch (error) {
             reject(error);
         }
@@ -131,23 +132,23 @@ let createNewUser = (data) => {
 }
 
 let deleteUser = (userId) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: {id: userId}
+                where: { id: userId }
             })
             if (user) {
                 //console.log(user);
                 // await user.destroy(); this will not work because destroy requried sequelize type, 
                 // but we set the raw:true so we need to do the following:
                 await db.User.destroy({
-                    where: {id: userId}
+                    where: { id: userId }
                 });
                 resolve({
                     errCode: 0,
                     errMessage: 'Successfully delete user'
                 })
-            } 
+            }
             resolve({
                 errCode: 2,
                 errMessage: 'User is not exist in our system, please try again'
@@ -159,7 +160,7 @@ let deleteUser = (userId) => {
 }
 
 let editUser = (data) => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             if (!data.id) {
                 resolve({
@@ -168,9 +169,9 @@ let editUser = (data) => {
                 })
             }
             let user = await db.User.findOne({
-                where: {id: data.id},
+                where: { id: data.id },
                 raw: false,
-            });           
+            });
             if (user) {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;

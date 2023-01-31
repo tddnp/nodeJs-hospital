@@ -39,7 +39,7 @@ let hashUserPassword = (password) => {
 let getAllUser = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let users = db.User.findAll({raw: true});
+            let users = db.User.findAll({ raw: true });
             resolve(users);
         } catch (error) {
             reject(error);
@@ -51,10 +51,10 @@ let getAllUserById = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: {id: userId},
+                where: { id: userId },
                 raw: true
             })
-            if (user){
+            if (user) {
                 resolve(user);
             } else {
                 resolve([]);
@@ -72,7 +72,7 @@ let updateUserData = (data) => {
                 where: { id: data.id },
                 raw: false,
             })
-            if (user){
+            if (user) {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
@@ -93,14 +93,14 @@ let deleteUserById = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: {id: userId}
+                where: { id: userId }
             });
             ///console.log(user);
-            if (user){
+            if (user) {
                 await user.destroy();
             }
             resolve(); // return
-            
+
         } catch (e) {
             reject(e);
         }
